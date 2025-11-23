@@ -5,8 +5,8 @@ import java.awt.event.MouseEvent;
 
 public class StartPanel extends JPanel {
 
-    private ImageIcon startBackgroungImage = new ImageIcon("introBackground.jpg"); // 배경 이미지
-    private Image backgroundIamge = startBackgroungImage.getImage(); // 배경 이미지 객체
+    private ImageIcon startBackgroundImage = new ImageIcon("introBackground.jpg"); // 배경 이미지
+    private Image backgroundImage = startBackgroundImage.getImage(); // 배경 이미지 객체
     private TextSource textSource = new TextSource(); // 단어 제어 객체 생성
     private ScorePanel scorePanel = new ScorePanel(); // 점수 패널 객체 생성
     private CatProfile catProfile = new CatProfile(); // 고양이 프로필 객체 생성
@@ -188,7 +188,7 @@ public class StartPanel extends JPanel {
     @Override
     public void paintComponent(Graphics g) {
         super.paintComponent(g); // 기본 그리기
-        g.drawImage(backgroundIamge, 0, 0, getWidth(), getHeight(), null); // 배경 이미지 그리기
+        g.drawImage(backgroundImage, 0, 0, getWidth(), getHeight(), null); // 배경 이미지 그리기
     }
 
 }

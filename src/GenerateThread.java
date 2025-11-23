@@ -115,7 +115,7 @@ public class GenerateThread extends Thread { // 라벨 생성 쓰레드
         runFlag = false; // 실행 플래그를 false로 설정
     }
 
-    // 중지 상태를 확인]\
+    // 중지 상태를 확인
     synchronized public void checkStop() {
         if (!runFlag) { // 중지 상태라면
             try {

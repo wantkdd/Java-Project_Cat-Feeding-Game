@@ -4,7 +4,7 @@ public class FallingThread extends Thread { // 라벨 떨어뜨리는 쓰레드
     private GameGroundPanel ground; // 게임 그라운드 패널
     private ScorePanel scorePanel; // 점수 패널
     private CatProfile catProfile; // 고양이 프로필
-    private static final int BOTTOM_THRESHOLD = 250; // 바닥에서 250 픽셀 위를
+    private static final int BOTTOM_THRESHOLD = 250; // 바닥에서 250 픽셀 위
     private volatile boolean isPaused = false; // 쓰레드 정지 상태 플래그
 
 

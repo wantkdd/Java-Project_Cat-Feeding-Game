@@ -136,6 +136,5 @@ public class FinishPanel extends JPanel {
     public void paintComponent(Graphics g) {
         super.paintComponent(g); // 기본 그리기
         g.drawImage(backgroundImage, 0, 0, getWidth(), getHeight(), null); // 배경 이미지 그리기
-        printRank(); // 랭킹 출력
     }
 }

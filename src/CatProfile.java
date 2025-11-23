@@ -7,7 +7,7 @@ public class CatProfile extends JPanel {
     private ImageIcon hungryCat = new ImageIcon("hungryCat.jpg"); // 배고픈 고양이 이미지
     private ImageIcon fullCat = new ImageIcon("fullCat.jpg"); // 배부른 고양이 이미지
     public Image profile = null; // 현재 고양이 이미지 저장
-    private JLabel text = new JLabel(); // 상태 메시지를
+    private JLabel text = new JLabel(); // 상태 메시지
 
     public CatProfile(){
         setBackground(Color.white); // 배경색을 흰색으로 설정

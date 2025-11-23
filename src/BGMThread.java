@@ -4,8 +4,8 @@ import java.io.IOException;
 
 public class BGMThread extends Thread {
     private Clip clip; // 오디오 클립 객체
-    private String filePath; //디오 파일 경로
-    private volatile boolean stopRequested = false; // BGM 중지 요청 여부를
+    private String filePath; // 오디오 파일 경로
+    private volatile boolean stopRequested = false; // BGM 중지 요청 여부
 
     public BGMThread(String filePath) {
         this.filePath = filePath; // 파일 경로 저장
@@ -19,16 +19,11 @@ public class BGMThread extends Thread {
             AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(audioFile);
             clip = AudioSystem.getClip(); // 오디오 클립 생성
             clip.open(audioInputStream); // 클립에 오디오 입력 스트림 연결
-            clip.start(); // 오디오 재생
+            clip.loop(Clip.LOOP_CONTINUOUSLY); // 오디오 무한 반복 재생
 
-            // 오디오 끝나면
-            clip.addLineListener(event -> {
-                if (event.getType() == LineEvent.Type.STOP) { // 오디오 끝나면
-                    clip.close(); // 클립 닫기
-                }
-            });
-            while (clip.isRunning()) {
-                Thread.sleep(10); // 10ms 단위로 실행 중인지 확인
+            // 중지 요청이 들어올 때까지 대기
+            while (!stopRequested && clip.isRunning()) {
+                Thread.sleep(100); // 100ms 단위로 중지 요청 확인
             }
         } catch (UnsupportedAudioFileException | IOException | LineUnavailableException | InterruptedException e) {
             e.printStackTrace(); // 예외 발생 시 오류 출력

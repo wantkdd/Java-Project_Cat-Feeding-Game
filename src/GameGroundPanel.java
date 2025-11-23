@@ -13,7 +13,7 @@ class GameGroundPanel extends JPanel {
     private JTextField inputField; // 입력 받을 텍스트 필드
     private CatProfile catProfile; // 고양이 프로필 패널
     private ImageIcon gameBackground = new ImageIcon("gameBackground.jpg"); // 게임 배경
-    private Image backgroundIamge = gameBackground.getImage(); // 배경 이미지아이콘 이미지로 변환
+    private Image backgroundImage = gameBackground.getImage(); // 배경 이미지 아이콘을 이미지로 변환
 
     public GameGroundPanel(ScorePanel scorePanel, TextSource textSource, CatProfile catProfile) {
         this.scorePanel = scorePanel; // 점수 패널 설정
@@ -139,6 +139,6 @@ class GameGroundPanel extends JPanel {
     @Override
     public void paintComponent(Graphics g) {
         super.paintComponent(g); // 기본 그리기
-        g.drawImage(backgroundIamge, 0, 0, getWidth(), getHeight(), null); // 배경 이미지 그리기
+        g.drawImage(backgroundImage, 0, 0, getWidth(), getHeight(), null); // 배경 이미지 그리기
     }
 }
