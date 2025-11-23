@@ -1,10 +1,14 @@
 import javax.swing.*;
-public class FallingThread extends Thread { // 라벨 떨어뜨리는 쓰레드
+
+/**
+ * 물고기 라벨의 낙하 애니메이션을 담당하는 스레드
+ * 설정된 속도로 라벨을 아래로 이동시키고, 바닥 도달 시 처리
+ */
+public class FallingThread extends Thread {
     private JLabel fallingLabel; // 떨어질 라벨
     private GameGroundPanel ground; // 게임 그라운드 패널
     private ScorePanel scorePanel; // 점수 패널
     private CatProfile catProfile; // 고양이 프로필
-    private static final int BOTTOM_THRESHOLD = 250; // 바닥에서 250 픽셀 위
     private volatile boolean isPaused = false; // 쓰레드 정지 상태 플래그
 
 
@@ -24,11 +28,11 @@ public class FallingThread extends Thread { // 라벨 떨어뜨리는 쓰레드
                         wait(); // 쓰레드 대기
                     }
                 }
-                // 라벨의 y 좌표를 10 픽셀씩 아래로 이동
-                fallingLabel.setLocation(fallingLabel.getX(), fallingLabel.getY() + 10);
+                // 라벨을 설정된 속도로 아래로 이동
+                fallingLabel.setLocation(fallingLabel.getX(), fallingLabel.getY() + GameConstants.FALLING_SPEED);
 
                 // 라벨이 바닥에 가까워졌다면
-                if (fallingLabel.getY() > ground.getHeight() - BOTTOM_THRESHOLD) {
+                if (fallingLabel.getY() > ground.getHeight() - GameConstants.BOTTOM_THRESHOLD) {
                     if (ground.containsLabel(fallingLabel)) { // 라벨이 그라운드 패널에 존재하는 경우
                         String labelType = fallingLabel.getName(); // 라벨 타입 가져오기
                         switch (labelType) { // 라벨 타입이

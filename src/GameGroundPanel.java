@@ -4,12 +4,16 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
-import java.util.Vector;
+import java.util.concurrent.CopyOnWriteArrayList;
 
+/**
+ * 게임 메인 플레이 영역 패널
+ * 물고기 낙하, 사용자 입력 처리, 일시정지 기능 등을 관리
+ */
 class GameGroundPanel extends JPanel {
     private boolean isPaused = false; // 게임 일시정지 상태
-    private Vector<JLabel> fallingLabels = new Vector<>(); // 떨어지는 라벨들을 저장하는 벡터
-    private Vector<FallingThread> fallingThreads = new Vector<>(); // FallingThread들을 저장하는 벡터
+    private CopyOnWriteArrayList<JLabel> fallingLabels = new CopyOnWriteArrayList<>(); // 떨어지는 라벨들을 저장 (스레드 안전)
+    private CopyOnWriteArrayList<FallingThread> fallingThreads = new CopyOnWriteArrayList<>(); // FallingThread들을 저장 (스레드 안전)
     private ScorePanel scorePanel; // 점수 패널
     private TextSource textSource; // 단어 관리 객체
     private GenerateThread generateThread; // 라벨 생성 객체
