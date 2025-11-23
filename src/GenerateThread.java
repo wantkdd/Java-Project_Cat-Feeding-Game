@@ -36,7 +36,7 @@ public class GenerateThread extends Thread { // 라벨 생성 쓰레드
                     fallingThread.start(); //쓰레드 시작
                 }
 
-                Thread.sleep(800); // 0.8초마다 라벨 생성
+                Thread.sleep(GameConstants.ITEM_GENERATION_INTERVAL); // 설정된 간격마다 라벨 생성
             }
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt(); // 인터럽트 상태 설정
@@ -47,67 +47,46 @@ public class GenerateThread extends Thread { // 라벨 생성 쓰레드
         double random = Math.random(); // 랜덤 확률 생성
 
         switch (scorePanel.getDifficulty()) { // 난이도에 따라 확률 결정
-            case 1: // easy 난이도
-                if (random < 0.89) { // 일반 단어 확률
-                    JLabel fishLabel = textSource.createFishLabel();
-                    fishLabel.setName("normal");
-                    return fishLabel;
-                } else if (random < 0.94) { // 점수 아이템 확률
-                    JLabel scoreItemLabel = textSource.createScoreItemLabel();
-                    scoreItemLabel.setName("bigFish");
-                    return scoreItemLabel;
-                } else if (random < 0.99) { // 하트 아이템 확률
-                    JLabel heartItemLabel = textSource.createHeartItemLabel();
-                    heartItemLabel.setName("heart");
-                    return heartItemLabel;
-                } else if (random < 1.0) { // 타임스탑 아이템 확률
-                    JLabel timeStopLabel = textSource.createTimeStopItemLabel();
-                    timeStopLabel.setName("timeStop");
-                    return timeStopLabel;
+            case GameConstants.DIFFICULTY_EASY:
+                if (random < GameConstants.EASY_NORMAL_PROB) {
+                    return createLabelWithName(textSource.createFishLabel(), "normal");
+                } else if (random < GameConstants.EASY_BIG_FISH_PROB) {
+                    return createLabelWithName(textSource.createScoreItemLabel(), "bigFish");
+                } else if (random < GameConstants.EASY_HEART_PROB) {
+                    return createLabelWithName(textSource.createHeartItemLabel(), "heart");
+                } else {
+                    return createLabelWithName(textSource.createTimeStopItemLabel(), "timeStop");
                 }
-                break;
 
-            case 2: // normal
-                if (random < 0.77) { // 일반 단어 확률
-                    JLabel fishLabel = textSource.createFishLabel();
-                    fishLabel.setName("normal");
-                    return fishLabel;
-                } else if (random < 0.87) { // 점수 아이템 확률
-                    JLabel scoreItemLabel = textSource.createScoreItemLabel();
-                    scoreItemLabel.setName("bigFish");
-                    return scoreItemLabel;
-                } else if (random < 0.97) { // 하트 아이템 확률
-                    JLabel heartItemLabel = textSource.createHeartItemLabel();
-                    heartItemLabel.setName("heart");
-                    return heartItemLabel;
-                } else if (random < 1.0) { // 타임스탑 아이템 확률
-                    JLabel timeStopLabel = textSource.createTimeStopItemLabel();
-                    timeStopLabel.setName("timeStop");
-                    return timeStopLabel;
+            case GameConstants.DIFFICULTY_NORMAL:
+                if (random < GameConstants.NORMAL_NORMAL_PROB) {
+                    return createLabelWithName(textSource.createFishLabel(), "normal");
+                } else if (random < GameConstants.NORMAL_BIG_FISH_PROB) {
+                    return createLabelWithName(textSource.createScoreItemLabel(), "bigFish");
+                } else if (random < GameConstants.NORMAL_HEART_PROB) {
+                    return createLabelWithName(textSource.createHeartItemLabel(), "heart");
+                } else {
+                    return createLabelWithName(textSource.createTimeStopItemLabel(), "timeStop");
                 }
-                break;
 
-            case 3: // hard
-                if (random < 0.65) { // 일반 단어 확률
-                    JLabel fishLabel = textSource.createFishLabel();
-                    fishLabel.setName("normal");
-                    return fishLabel;
-                } else if (random < 0.85) { // 점수 아이템 확률
-                    JLabel scoreItemLabel = textSource.createScoreItemLabel();
-                    scoreItemLabel.setName("bigFish");
-                    return scoreItemLabel;
-                } else if (random < 0.95) { // 하트 아이템 확률
-                    JLabel heartItemLabel = textSource.createHeartItemLabel();
-                    heartItemLabel.setName("heart");
-                    return heartItemLabel;
-                } else if (random < 1.0) { // 타임스탑 아이템 확률
-                    JLabel timeStopLabel = textSource.createTimeStopItemLabel();
-                    timeStopLabel.setName("timeStop");
-                    return timeStopLabel;
+            case GameConstants.DIFFICULTY_HARD:
+                if (random < GameConstants.HARD_NORMAL_PROB) {
+                    return createLabelWithName(textSource.createFishLabel(), "normal");
+                } else if (random < GameConstants.HARD_BIG_FISH_PROB) {
+                    return createLabelWithName(textSource.createScoreItemLabel(), "bigFish");
+                } else if (random < GameConstants.HARD_HEART_PROB) {
+                    return createLabelWithName(textSource.createHeartItemLabel(), "heart");
+                } else {
+                    return createLabelWithName(textSource.createTimeStopItemLabel(), "timeStop");
                 }
-                break;
         }
         return null; // 라벨 생성 실패 시 null 반환
+    }
+
+    // 라벨에 이름을 설정하여 반환하는 헬퍼 메서드
+    private JLabel createLabelWithName(JLabel label, String name) {
+        label.setName(name);
+        return label;
     }
 
     // 쓰레드 중지
@@ -115,7 +94,7 @@ public class GenerateThread extends Thread { // 라벨 생성 쓰레드
         runFlag = false; // 실행 플래그를 false로 설정
     }
 
-    // 중지 상태를 확인]\
+    // 중지 상태를 확인
     synchronized public void checkStop() {
         if (!runFlag) { // 중지 상태라면
             try {

@@ -2,7 +2,7 @@ import javax.swing.*;
 import java.awt.*;
 
 public class GamePanel extends JPanel {
-    private GameGroundPanel ground; // 게임 영역 패널 (
+    private GameGroundPanel ground; // 게임 영역 패널
     private ScorePanel scorePanel; // 점수 패널
     private CatProfile catProfile; // 고양이 프로필
     private TextSource textSource; // 단어 제어 객체

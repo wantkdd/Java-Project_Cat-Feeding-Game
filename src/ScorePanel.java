@@ -2,168 +2,240 @@ import javax.swing.*;
 import java.awt.*;
 import java.util.ArrayList;
 
-public class ScorePanel extends JPanel { // 점수 관리 클래스
-    private int score = 0; // 점수 저장
+/**
+ * 게임의 점수, 생명(하트), 난이도를 관리하는 패널
+ * 점수 증감, 생명 관리, 난이도별 게임 속도 설정 등을 담당
+ */
+public class ScorePanel extends JPanel {
+    private int score = 0; // 현재 점수
     private JLabel scoreLabel = new JLabel("점수 : 0"); // 점수를 표시하는 라벨
-    private int patience = 5; // 기본 생명 개수 설정
-    private int speed = 0; // 게임 속도 설정
-    private int difficulty = 0; // 난이도 설정
+    private int patience = GameConstants.INITIAL_PATIENCE; // 현재 생명
+    private int speed = 0; // 현재 게임 속도 (ms)
+    private int difficulty = 0; // 현재 난이도
 
-    private ArrayList<JLabel> hearts = new ArrayList<>(); // 하트 라벨을 저장할 리스트
-    private ImageIcon heart = new ImageIcon(new ImageIcon("heart.png").getImage().getScaledInstance(90, 90, Image.SCALE_SMOOTH)); // 하트 이미지 설정
+    private ArrayList<JLabel> hearts = new ArrayList<>(); // 하트 UI 라벨 리스트
+    private final ImageIcon heart; // 하트 이미지 아이콘 (캐싱)
 
+    /**
+     * ScorePanel 생성자
+     * 초기 UI 설정 및 하트 표시
+     */
     public ScorePanel() {
+        // 하트 이미지 로드 및 캐싱
+        heart = new ImageIcon(new ImageIcon("heart.png").getImage().getScaledInstance(90, 90, Image.SCALE_SMOOTH));
+
         this.setBackground(new Color(255, 193, 204)); // 배경색 설정
-        this.setLayout(null); // 레이아웃 null로 설정
+        this.setLayout(null); // 절대 레이아웃 사용
 
         // 점수 라벨 설정
         scoreLabel.setBounds(50, 40, 500, 100);
-        scoreLabel.setFont(new Font("MalgunGothic", Font.BOLD, 60)); // 폰트 크기 설정
-        scoreLabel.setHorizontalAlignment(SwingConstants.CENTER); // 텍스트 가운데 정렬
-        add(scoreLabel); // 점수 라벨 추가
+        scoreLabel.setFont(new Font("MalgunGothic", Font.BOLD, 60));
+        scoreLabel.setHorizontalAlignment(SwingConstants.CENTER);
+        add(scoreLabel);
 
         // 초기 생명(하트) 라벨 설정
         for (int i = 0; i < patience; i++) {
-            JLabel heartImg = new JLabel(heart); // 하트 이미지 라벨 생성
-            heartImg.setBounds(50 + (i * 100), 250, 90, 90); // 하트 위치 설정
-            hearts.add(heartImg); // 리스트에 하트 추가
-            add(heartImg); // 패널에 하트 추가
+            JLabel heartImg = new JLabel(heart);
+            heartImg.setBounds(50 + (i * 100), 250, 90, 90);
+            hearts.add(heartImg);
+            add(heartImg);
         }
     }
 
-
-    public void increase() { //점수 증가
-        switch (difficulty) { //난이도에 따라 점수 폭 다름
-            case 1:
-                score++;
+    /**
+     * 난이도에 따라 점수를 증가시킴
+     * Easy: +1, Normal: +2, Hard: +3
+     */
+    public void increase() {
+        switch (difficulty) {
+            case GameConstants.DIFFICULTY_EASY:
+                score += GameConstants.SCORE_MULTIPLIER_EASY;
                 break;
-            case 2:
-                score += 2;
+            case GameConstants.DIFFICULTY_NORMAL:
+                score += GameConstants.SCORE_MULTIPLIER_NORMAL;
                 break;
-            case 3:
-                score += 3;
+            case GameConstants.DIFFICULTY_HARD:
+                score += GameConstants.SCORE_MULTIPLIER_HARD;
                 break;
         }
-        scoreLabel.setText("점수: " + score); // 점수 라벨 갱신
+        updateScoreLabel();
     }
 
-    public void increase(int amount) { //bigFish 위한 증가 메소드
-        score += amount; // 점수 증가
-        scoreLabel.setText("점수: " + score); // 점수 라벨 갱신
+    /**
+     * 지정된 점수만큼 증가시킴 (특수 아이템용)
+     * @param amount 증가시킬 점수
+     */
+    public void increase(int amount) {
+        score += amount;
+        updateScoreLabel();
     }
 
-    public int getScore() { // 현재 점수 반환
+    /**
+     * 점수 라벨 UI 업데이트
+     */
+    private void updateScoreLabel() {
+        scoreLabel.setText("점수: " + score);
+    }
+
+    /**
+     * 현재 점수 반환
+     * @return 현재 점수
+     */
+    public int getScore() {
         return score;
     }
 
-    // 이지 난이도 설정
+    /**
+     * Easy 난이도 설정
+     * 생명 5개, 속도 300ms, 점수 배율 1배
+     */
     public void easy() {
-        patience = 5; // 생명 5개로 설정
-        speed = 300; // 게임 속도 설정
-        difficulty = 1; // 난이도 설정
-        resetHearts(); // 하트 초기화
+        patience = GameConstants.INITIAL_PATIENCE;
+        speed = GameConstants.SPEED_EASY;
+        difficulty = GameConstants.DIFFICULTY_EASY;
+        resetGame();
     }
 
-    // 노멀 난이도 설정
+    /**
+     * Normal 난이도 설정
+     * 생명 5개, 속도 200ms, 점수 배율 2배
+     */
     public void normal() {
-        patience = 5; // 생명 5개로 설정
-        speed = 200; // 게임 속도 설정
-        difficulty = 2; // 난이도 설정
-        resetHearts(); // 하트 초기화
+        patience = GameConstants.INITIAL_PATIENCE;
+        speed = GameConstants.SPEED_NORMAL;
+        difficulty = GameConstants.DIFFICULTY_NORMAL;
+        resetGame();
     }
 
-    // 하드 난이도 설정
+    /**
+     * Hard 난이도 설정
+     * 생명 5개, 속도 100ms, 점수 배율 3배
+     */
     public void hard() {
-        patience = 5; // 생명 5개로 설정
-        speed = 100; // 게임 속도 설정
-        difficulty = 3; // 난이도 설정
-        resetHearts(); // 하트 초기화
+        patience = GameConstants.INITIAL_PATIENCE;
+        speed = GameConstants.SPEED_HARD;
+        difficulty = GameConstants.DIFFICULTY_HARD;
+        resetGame();
     }
 
-    // 남은 생명 수 반환
+    /**
+     * 게임 재시작 시 점수와 하트를 초기화
+     */
+    private void resetGame() {
+        score = 0; // 점수 초기화
+        updateScoreLabel(); // 점수 라벨 갱신
+        resetHearts(); // 하트 UI 초기화
+    }
+
+    /**
+     * 남은 생명 수 반환
+     * @return 현재 생명
+     */
     public int getPatience() {
         return patience;
     }
 
-    // 게임 속도 반환
+    /**
+     * 현재 게임 속도 반환
+     * @return 게임 속도 (ms)
+     */
     public int getSpeed() {
         return speed;
     }
 
-    // 현재 난이도 반환
+    /**
+     * 현재 난이도 반환
+     * @return 난이도 (1: Easy, 2: Normal, 3: Hard)
+     */
     public int getDifficulty() {
         return difficulty;
     }
 
-    // 생명을 감소시키는 메서드
+    /**
+     * 생명을 1 감소시킴
+     * 생명이 0이 되면 게임 오버 체크
+     */
     public void decreasePatience() {
-        if (patience > 0) { // 생명이 남아있다면
+        if (patience > 0) {
             patience--;
-            removeHeart(); // 하트 제거
-        } else if (patience <= 0) { // 생명이 모두 소진되면
-            GamePanel gamePanel = findGamePanel(); // GamePanel을 찾아서
+            removeHeart();
+        } else if (patience <= 0) {
+            GamePanel gamePanel = findGamePanel();
             if (gamePanel != null) {
-                gamePanel.checkGameOver(); // 게임 오버 상태 확인
+                gamePanel.checkGameOver();
             }
         }
     }
 
-    // 생명을 증가시키는 메서드
+    /**
+     * 생명을 1 증가시킴 (최대 5개)
+     */
     public void increasePatience() {
-        if (patience < 5) { // 최대 생명이 5개 이하일 경우만
+        if (patience < GameConstants.MAX_PATIENCE) {
             patience++;
-            addHeart(); // 하트 추가
+            addHeart();
         }
     }
 
-    // 하트를 초기화하는 메서드
+    /**
+     * 하트 UI를 현재 생명 수에 맞게 초기화
+     */
     private void resetHearts() {
-        for (JLabel heart : hearts) { // 기존 하트 제거
-            remove(heart);
+        // 기존 하트 UI 제거
+        for (JLabel heartLabel : hearts) {
+            remove(heartLabel);
         }
-        hearts.clear(); // 리스트 초기화
+        hearts.clear();
 
-        for (int i = 0; i < patience; i++) { // 현재 생명 수만큼
-            JLabel heartLabel = new JLabel(heart); //하트 라벨 생성
-            heartLabel.setBounds(50 + (i * 100), 250, 90, 90); //위치와 크기 설정
-            hearts.add(heartLabel); //벡터에 추가
-            add(heartLabel); //패널에 추가
+        // 현재 생명 수만큼 하트 UI 생성
+        for (int i = 0; i < patience; i++) {
+            JLabel heartLabel = new JLabel(heart);
+            heartLabel.setBounds(50 + (i * 100), 250, 90, 90);
+            hearts.add(heartLabel);
+            add(heartLabel);
         }
 
-        revalidate(); // 컴포넌트 갱신
-        repaint(); // 화면 다시 그리기
-    }
-
-    // 하트를 제거하는 메서드
-    private void removeHeart() {
-        if (!hearts.isEmpty()) { // 리스트에 하트가 있을 경우
-            JLabel heartToRemove = hearts.get(hearts.size() - 1); // 마지막 하트 선택
-            hearts.remove(heartToRemove); // 리스트에서 제거
-            remove(heartToRemove); // 패널에서 제거
-            revalidate(); //컴포넌트 갱신
-            repaint(); //다시 그리기
-        }
-    }
-
-    // 하트를 추가하는 메서드
-    private void addHeart() {
-        JLabel newHeart = new JLabel(heart); // 새 하트 라벨 생성
-        newHeart.setBounds(50 + (hearts.size() * 100), 250, 90, 90); // 위치와 크기 설정
-        hearts.add(newHeart); // 리스트에 추가
-        add(newHeart); // 패널에 추가
         revalidate();
         repaint();
     }
 
-    // 부모 컴포넌트를 탐색하여 GamePanel을 반환하는 메서드
+    /**
+     * 하트 UI를 하나 제거
+     */
+    private void removeHeart() {
+        if (!hearts.isEmpty()) {
+            JLabel heartToRemove = hearts.get(hearts.size() - 1);
+            hearts.remove(heartToRemove);
+            remove(heartToRemove);
+            revalidate();
+            repaint();
+        }
+    }
+
+    /**
+     * 하트 UI를 하나 추가
+     */
+    private void addHeart() {
+        JLabel newHeart = new JLabel(heart);
+        newHeart.setBounds(50 + (hearts.size() * 100), 250, 90, 90);
+        hearts.add(newHeart);
+        add(newHeart);
+        revalidate();
+        repaint();
+    }
+
+    /**
+     * 부모 컴포넌트 계층에서 GamePanel을 찾아 반환
+     * @return GamePanel 인스턴스 또는 null
+     */
     private GamePanel findGamePanel() {
-        Container parent = getParent(); // 현재 패널의 부모 컨테이너 탐색
+        Container parent = getParent();
         while (parent != null) {
-            if (parent instanceof GamePanel) { // 부모 중 GamePanel을 찾으면 반환
+            if (parent instanceof GamePanel) {
                 return (GamePanel) parent;
             }
-            parent = parent.getParent(); // 상위 부모로 이동
+            parent = parent.getParent();
         }
-        return null; // GamePanel을 찾지 못하면 null 반환
+        return null;
     }
 }
